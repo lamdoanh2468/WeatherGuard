@@ -7,7 +7,12 @@ import '../services/weather_service.dart';
 class WeatherProvider extends ChangeNotifier {
   WeatherData? weather;
   AirQualityData? airQuality;
-  List<Map<String, dynamic>> forecast = const [];
+  List<Map<String, dynamic>> forecast = [
+    {'time': '06h', 'temp': 22},
+    {'time': '09h', 'temp': 25},
+    {'time': '12h', 'temp': 30},
+    {'time': '15h', 'temp': 33},
+  ];
   String city = 'Hanoi';
   bool loading = false;
   String? error;
