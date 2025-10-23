@@ -1,1 +1,0 @@
-Put images and other static assets here. Declare folder in pubspec.yaml under flutter/assets.
