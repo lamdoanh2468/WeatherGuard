@@ -19,17 +19,19 @@ class WeatherService {
 
   Future<String> _getAqicnKey() async {
     final prefs = await SharedPreferences.getInstance();
-    return dotenv.env['AQICN_API_KEY'] ?? prefs.getString('aqicn_api_key') ?? '';
+    return dotenv.env['AQICN_API_KEY'] ??
+        prefs.getString('aqicn_api_key') ??
+        '';
   }
 
   Future<bool> _hasValidOpenWeatherKey() async {
     final key = await _getOpenWeatherKey();
-    return key.isNotEmpty && key != 'YOUR_OPENWEATHERMAP_API_KEY';
+    return key.isNotEmpty && key != '2aba6509f642aef657cea68a15d5647e';
   }
 
   Future<bool> _hasValidAqicnKey() async {
     final key = await _getAqicnKey();
-    return key.isNotEmpty && key != 'YOUR_AQICN_API_KEY';
+    return key.isNotEmpty && key != '5d3de55f0a4752e96ecd9623386803d6f16ff7b6';
   }
 
   Future<WeatherData> getCurrentWeather({String city = 'Hanoi'}) async {
@@ -84,8 +86,8 @@ class WeatherService {
         co: (iaqi['co']?['v'] as num?) ?? 0,
         o3: (iaqi['o3']?['v'] as num?) ?? 0,
         status: _getAQIStatus(aqi.toInt()),
-        timestamp: DateTime.tryParse(aqiData['time']?['iso'] ?? '') ??
-            DateTime.now(),
+        timestamp:
+            DateTime.tryParse(aqiData['time']?['iso'] ?? '') ?? DateTime.now(),
       );
     } catch (_) {
       return _mockAirQualityData();
@@ -121,7 +123,8 @@ class WeatherService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getForecast({String city = 'Hanoi'}) async {
+  Future<List<Map<String, dynamic>>> getForecast(
+      {String city = 'Hanoi'}) async {
     if (!await _hasValidOpenWeatherKey()) {
       return _mockForecastData();
     }
@@ -135,7 +138,8 @@ class WeatherService {
       final List list = (data['list'] as List).take(8).toList();
       return list.map<Map<String, dynamic>>((item) {
         final m = item as Map<String, dynamic>;
-        final dt = DateTime.fromMillisecondsSinceEpoch((m['dt'] as num).toInt() * 1000);
+        final dt = DateTime.fromMillisecondsSinceEpoch(
+            (m['dt'] as num).toInt() * 1000);
         return {
           'time': '${dt.hour}h',
           'temp': (m['main']['temp'] as num).round(),
@@ -201,9 +205,19 @@ class WeatherService {
 
   List<Map<String, dynamic>> _mockForecastData() => const [
         {'time': '6h', 'temp': 25, 'condition': 'sunny', 'humidity': 70},
-        {'time': '9h', 'temp': 27, 'condition': 'partly-cloudy', 'humidity': 65},
+        {
+          'time': '9h',
+          'temp': 27,
+          'condition': 'partly-cloudy',
+          'humidity': 65
+        },
         {'time': '12h', 'temp': 30, 'condition': 'cloudy', 'humidity': 60},
-        {'time': '15h', 'temp': 32, 'condition': 'partly-cloudy', 'humidity': 55},
+        {
+          'time': '15h',
+          'temp': 32,
+          'condition': 'partly-cloudy',
+          'humidity': 55
+        },
         {'time': '18h', 'temp': 29, 'condition': 'cloudy', 'humidity': 65},
         {'time': '21h', 'temp': 26, 'condition': 'rainy', 'humidity': 80},
         {'time': '24h', 'temp': 24, 'condition': 'rainy', 'humidity': 85},

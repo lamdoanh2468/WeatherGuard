@@ -27,6 +27,14 @@ class _AppState extends State<App> {
     AccountPage(),
   ];
 
+  final _titles = const [
+    'Tổng quan',
+    'Biểu đồ',
+    'Bản đồ',
+    'Cảnh báo',
+    'Tài khoản',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -38,37 +46,77 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Weather Dashboard',
+      title: 'WeatherGuard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
         brightness: Brightness.light,
+        colorSchemeSeed: Colors.blue,
+        scaffoldBackgroundColor: const Color(0xFFF9FAFB),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+          iconTheme: IconThemeData(color: Colors.black54),
+        ),
       ),
       routes: {
         '/api-keys': (_) => const ApiKeySetupPage(),
       },
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Weather Dashboard'),
+          title: Text(_titles[_index]),
           actions: [
             IconButton(
               onPressed: () => Navigator.pushNamed(context, '/api-keys'),
-              icon: const Icon(Icons.vpn_key),
+              icon: const Icon(Icons.vpn_key_rounded),
               tooltip: 'Cài đặt API',
             ),
           ],
         ),
-        body: _pages[_index],
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _index,
-          onDestinationSelected: (i) => setState(() => _index = i),
-          destinations: const [
-            NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Tổng quan'),
-            NavigationDestination(icon: Icon(Icons.show_chart_outlined), selectedIcon: Icon(Icons.show_chart), label: 'Biểu đồ'),
-            NavigationDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: 'Bản đồ'),
-            NavigationDestination(icon: Icon(Icons.notifications_outlined), selectedIcon: Icon(Icons.notifications), label: 'Cảnh báo'),
-            NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Tài khoản'),
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _pages[_index],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _index,
+          onTap: (i) => setState(() => _index = i),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.blueAccent,
+          unselectedItemColor: Colors.grey,
+          showUnselectedLabels: true,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_outlined),
+              activeIcon: Icon(Icons.dashboard),
+              label: 'Tổng quan',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.show_chart_outlined),
+              activeIcon: Icon(Icons.show_chart),
+              label: 'Biểu đồ',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map_outlined),
+              activeIcon: Icon(Icons.map),
+              label: 'Bản đồ',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_outlined),
+              activeIcon: Icon(Icons.notifications),
+              label: 'Cảnh báo',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: 'Tài khoản',
+            ),
           ],
         ),
       ),
