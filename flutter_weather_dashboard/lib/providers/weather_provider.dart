@@ -15,12 +15,24 @@ class WeatherProvider extends ChangeNotifier {
   ];
   String city = 'Hanoi';
   bool loading = false;
+  bool _isInitialized = false;
   String? error;
 
+  bool get isInitialized => _isInitialized;
+
   Future<void> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    city = prefs.getString('city') ?? 'Hanoi';
-    await refreshAll();
+    if (_isInitialized) return; // Prevent double initialization
+    
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      city = prefs.getString('city') ?? 'Hanoi';
+      await refreshAll();
+      _isInitialized = true;
+    } catch (e) {
+      error = 'Lỗi khởi tạo: ${e.toString()}';
+      _isInitialized = true; // Mark as initialized even if failed
+      notifyListeners();
+    }
   }
 
   Future<void> refreshAll() async {
