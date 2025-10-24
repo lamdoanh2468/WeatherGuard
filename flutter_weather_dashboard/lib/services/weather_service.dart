@@ -12,16 +12,26 @@ class WeatherService {
 
   Future<String> _getOpenWeatherKey() async {
     final prefs = await SharedPreferences.getInstance();
-    return dotenv.env['OPENWEATHER_API_KEY'] ??
-        prefs.getString('openweather_api_key') ??
-        '';
+    try {
+      return dotenv.env['OPENWEATHER_API_KEY'] ??
+          prefs.getString('openweather_api_key') ??
+          '';
+    } catch (e) {
+      // Fallback to SharedPreferences if dotenv fails
+      return prefs.getString('openweather_api_key') ?? '';
+    }
   }
 
   Future<String> _getAqicnKey() async {
     final prefs = await SharedPreferences.getInstance();
-    return dotenv.env['AQICN_API_KEY'] ??
-        prefs.getString('aqicn_api_key') ??
-        '';
+    try {
+      return dotenv.env['AQICN_API_KEY'] ??
+          prefs.getString('aqicn_api_key') ??
+          '';
+    } catch (e) {
+      // Fallback to SharedPreferences if dotenv fails
+      return prefs.getString('aqicn_api_key') ?? '';
+    }
   }
 
   Future<bool> _hasValidOpenWeatherKey() async {
