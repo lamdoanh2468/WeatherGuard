@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="weather_guard_running" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/flutter_weather_dashboard/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>
