@@ -47,11 +47,7 @@ class AccountPage extends StatelessWidget {
                 _buildProfileCard(context),
                 const SizedBox(height: 24),
 
-                // City Settings
-                _buildSectionTitle(context, 'Location'),
-                const SizedBox(height: 12),
-                _buildCityInput(context, provider),
-                const SizedBox(height: 24),
+                // REMOVED: City Settings section (không còn cần vì provider không có city)
 
                 // 4.2 - Station Management
                 _buildSectionTitle(context, 'Monitor Station Management'),
@@ -82,7 +78,6 @@ class AccountPage extends StatelessWidget {
                     ),
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.red),
-                      // Background color
                       backgroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
@@ -104,9 +99,9 @@ class AccountPage extends StatelessWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+      ),
     );
   }
 
@@ -164,41 +159,7 @@ class AccountPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCityInput(BuildContext context, WeatherProvider provider) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            const Icon(Icons.location_city, color: Colors.blue),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'City',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 4),
-                  TextFormField(
-                    initialValue: provider.city,
-                    onFieldSubmitted: (v) => provider.setCity(v),
-                    decoration: const InputDecoration(
-                      hintText: 'Enter city (e.g., Hanoi, Ho Chi Minh)',
-                      border: OutlineInputBorder(),
-                      isDense: true,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // REMOVED: _buildCityInput widget
 
   // 4.2 - Station Management
   Widget _buildStationManagementCard(BuildContext context) {
@@ -235,7 +196,7 @@ class AccountPage extends StatelessWidget {
         children: [
           ListTile(
             leading:
-                const Icon(Icons.notifications_active, color: Colors.orange),
+            const Icon(Icons.notifications_active, color: Colors.orange),
             title: const Text(
               'Alert Thresholds',
               style: TextStyle(fontWeight: FontWeight.w500),
@@ -278,11 +239,11 @@ class AccountPage extends StatelessWidget {
   }
 
   Widget _buildAlertThresholdItem(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+      String label,
+      String value,
+      IconData icon,
+      Color color,
+      ) {
     return Row(
       children: [
         Icon(icon, size: 20, color: color),

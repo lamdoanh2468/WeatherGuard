@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'pages/account_page.dart';
 import 'pages/alerts_page.dart';
-import 'pages/api_key_setup_page.dart';
 import 'pages/charts_page.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/maps_page.dart';
@@ -66,9 +65,6 @@ class _AppState extends State<App> {
           iconTheme: IconThemeData(color: Colors.black54),
         ),
       ),
-      routes: {
-        '/api-keys': (_) => const ApiKeySetupPage(),
-      },
       home: Scaffold(
         appBar: AppBar(
           title: Text(_titles[_index]),
