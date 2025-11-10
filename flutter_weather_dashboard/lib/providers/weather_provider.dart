@@ -7,9 +7,12 @@ class WeatherProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _weatherList = [];
 
   List<Map<String, dynamic>> get weatherList => _weatherList;
-void init(){
-  listenToWeatherData();
-}
+
+  // Thêm method init()
+  void init() {
+    listenToWeatherData();
+  }
+
   void listenToWeatherData() {
     _weatherService.getWeaterData().listen((data) {
       _weatherList = data;
