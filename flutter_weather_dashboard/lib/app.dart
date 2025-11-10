@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'pages/account_page.dart';
 import 'pages/alerts_page.dart';
 import 'pages/charts_page.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/maps_page.dart';
-import 'providers/weather_provider.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -37,9 +34,6 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<WeatherProvider>().init();
-    });
   }
 
   @override
