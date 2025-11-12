@@ -1,37 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_weather_dashboard/firebase_options.dart';
 import 'package:provider/provider.dart';
-
-import 'app.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'providers/weather_provider.dart';
+import 'providers/theme_provider.dart';
+import 'app.dart';
 
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await dotenv.load(fileName: '.env').catchError((_) => null);
-//   runApp(
-//     ChangeNotifierProvider(
-//       create: (_) => WeatherProvider()..init(), //Manage Weather Data
-//       child: const App(),
-//     ),
-//   );
-// }
-// main.dart
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Xóa .catchError((_) => null)
-  // Thêm try-catch để in lỗi thật ra console
-  try {
-    await dotenv.load(fileName: '.env');
-  } catch (e) {
-    print('!!!!!!!!!!!!!! LỖI KHI LOAD .env !!!!!!!!!!!!!!');
-    print(e); // Lỗi thật sẽ in ở đây
-    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-  }
-
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => WeatherProvider()..init(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => WeatherProvider()..init()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
       child: const App(),
     ),
   );

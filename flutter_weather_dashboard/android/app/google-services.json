@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "467423168153",
+    "firebase_url": "https://dht11anddht22-14fb9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "dht11anddht22-14fb9",
+    "storage_bucket": "dht11anddht22-14fb9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467423168153:android:c5b78699e32a4aede85a08",
+        "android_client_info": {
+          "package_name": "com.example.flutter_weather_dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdFBsNFZsdn0tTaR2v77Fmx2PQ64wmy0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
