@@ -2,8 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_dashboard/models/weather_models.dart';
 import 'package:flutter_weather_dashboard/services/firebase_service.dart';
-import 'package:flutter_weather_dashboard/services/firebase_service.dart';
-import 'package:flutter_weather_dashboard/models/weather_models.dart';
 
 class ChartsPage extends StatelessWidget {
   const ChartsPage({super.key});
@@ -11,7 +9,6 @@ class ChartsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Biểu đồ DHT22')),
       body: StreamBuilder<List<WeatherData>>(
         stream: FirebaseService().getWeatherStream().map((dataList) {
           return dataList.map((jsonData) {
@@ -40,7 +37,7 @@ class ChartsPage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: LineChart(
               LineChartData(
-                titlesData: FlTitlesData(show: false),
+                titlesData: const FlTitlesData(show: false),
                 borderData: FlBorderData(show: true),
                 lineBarsData: [
                   LineChartBarData(

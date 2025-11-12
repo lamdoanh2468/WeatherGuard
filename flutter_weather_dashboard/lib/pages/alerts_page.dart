@@ -45,11 +45,6 @@ class _AlertsPageState extends State<AlertsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications & Alerts'),
-        backgroundColor: Colors.redAccent,
-        foregroundColor: Colors.white,
-      ),
       body: _notifications.isEmpty
           ? Center(
               child: Padding(

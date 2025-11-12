@@ -30,17 +30,6 @@ class AccountPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
-                const Text(
-                  'Account & Settings',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
                 // 4.1 - Account Info
                 _buildSectionTitle(context, 'Account Information'),
                 const SizedBox(height: 12),
@@ -222,13 +211,6 @@ class AccountPage extends StatelessWidget {
                   '> 80%',
                   Icons.water_drop,
                   Colors.blue,
-                ),
-                const SizedBox(height: 8),
-                _buildAlertThresholdItem(
-                  'Air Quality',
-                  'AQI > 100',
-                  Icons.air,
-                  Colors.purple,
                 ),
               ],
             ),
