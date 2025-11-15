@@ -1,1 +1,9 @@
+venv/
 tfenv/
+Lib/
+__pycache__/
+*.dll
+*.so
+*.pyc
+.env
+.env/
