@@ -27,4 +27,4 @@ clean_df = pd.DataFrame(records)
 # --- Xuất file sạch ---
 clean_df.to_csv("dht22_final.csv", index=False)
 
-print("leaning complete! File saved as dht22_final.csv")
+print("Cleaning complete! File saved as dht22_final.csv")

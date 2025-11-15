@@ -1,56 +1,92 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_weather_dashboard/services/firebase_service.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class WeatherProvider extends ChangeNotifier {
-  final FirebaseService _firebaseService = FirebaseService();
-  List<Map<String, dynamic>> _weatherList = [];
+  Map<String, dynamic>? latest;
+  List<Map<String, dynamic>> weatherList = [];
+  Map<String, dynamic>? stats;
+  Timer? _timer;
 
-  List<Map<String, dynamic>> get weatherList => _weatherList;
+  final String apiBase = 'http://10.0.2.2:8000';
 
-  // Thêm method init()
-  void init() {
-    listenToWeatherData();
+  WeatherProvider() {
+    _startPolling();
   }
 
-  void listenToWeatherData() {
-    _firebaseService.getWeatherStream().listen((data) {
-      _weatherList = data.map((e) {
-        return {
-          'datetime': _normalizeTime(e['datetime']),
-          'timestamp': _normalizeTime(e['timestamp']),
-          'temperature': _parseDouble(e['temperature']),
-          'humidity': _parseDouble(e['humidity']),
-        };
-      }).toList();
-
-      // Mới nhất lên đầu
-      _weatherList.sort((a, b) => b['datetime'].compareTo(a['datetime']));
-      notifyListeners();
-    });
+  void _startPolling() {
+    // Polling 5 giây
+    _fetchLatest();
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) => _fetchLatest());
   }
 
-  double _parseDouble(dynamic value) {
-    if (value == null) return 0.0;
-    if (value is num) return value.toDouble();
-    if (value is String) {
-      final parsed = double.tryParse(value);
-      return parsed ?? 0.0;
-    }
-    return 0.0;
-  }
+  Future<void> _fetchLatest() async {
+    try {
+      final response = await http.get(Uri.parse('$apiBase/latest'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        latest = data;
 
-  /// Chấp nhận cả String và int cho datetime/timestamp
-  String _normalizeTime(dynamic value) {
-    if (value == null) return '';
-    if (value is String) return value;
-    if (value is int) {
-      try {
-        final dt = DateTime.fromMillisecondsSinceEpoch(value * 1000);
-        return dt.toIso8601String();
-      } catch (_) {
-        return value.toString();
+        // Lưu lại history tối đa 10 bản ghi
+        if (data.isNotEmpty) {
+          // Lấy timestamp của bản ghi mới nhất trong weatherList
+          final lastTimestamp =
+              weatherList.isNotEmpty ? weatherList.first['timestamp'] : null;
+
+          // Chỉ thêm nếu timestamp khác
+          if (lastTimestamp != data['timestamp']) {
+            weatherList.insert(0, data);
+            if (weatherList.length > 10) {
+              weatherList = weatherList.take(10).toList();
+            }
+          }
+        }
+        notifyListeners();
+      } else {
+        debugPrint('Failed to fetch latest weather: ${response.statusCode}');
       }
+    } catch (e) {
+      debugPrint('Error fetching latest weather: $e');
     }
-    return value.toString();
+  }
+
+  Future<void> loadLatest() async => _fetchLatest();
+
+  Future<void> _fetchStats() async {
+    try {
+      final response = await http.get(Uri.parse('$apiBase/stats'));
+      if (response.statusCode == 200) {
+        stats = jsonDecode(response.body);
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error fetching stats: $e');
+    }
+  }
+
+  Future<void> _fetchRealtime() async {
+    try {
+      final response = await http.get(Uri.parse('$apiBase/realtime'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // data phải trả về list 60 bản ghi forecast + cluster
+        // lưu vào weatherList hoặc chartData
+        // mình dùng weatherList cho chart
+        if (data is Map && data.containsKey('forecast')) {
+          weatherList = List<Map<String, dynamic>>.from(data['forecast']);
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error fetching realtime: $e');
+    }
+  }
+  Future<void> loadStats() async => _fetchStats();
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }

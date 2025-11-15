@@ -6,9 +6,11 @@ from utils import forecast_and_cluster
 app = FastAPI()
 
 FIREBASE_URL = "https://dht11anddht22-14fb9-default-rtdb.asia-southeast1.firebasedatabase.app/.json"
+
 @app.get("/")
 def home():
     return {"message": "API running OK!"}
+
 @app.get("/realtime")
 def realtime_forecast():
 
@@ -52,6 +54,7 @@ def realtime_forecast():
     output = forecast_and_cluster(df_last)
 
     return output
+
 @app.get("/latest")
 def get_latest_record():
     # Lấy toàn bộ data từ Firebase
@@ -90,6 +93,7 @@ def get_latest_record():
         "timestamp": int(latest["timestamp"]),
         "datetime": readable_time
     }
+
 @app.get("/stats")
 def get_stats():
     data = requests.get(FIREBASE_URL).json()
@@ -124,3 +128,17 @@ def get_stats():
     }
 
     return stats
+
+@app.get("/health")
+def health_check():
+    """Kiểm tra Firebase kết nối OK không"""
+    try:
+        response = requests.get(FIREBASE_URL, timeout=5)
+        firebase_status = "OK" if response.status_code == 200 else "ERROR"
+    except:
+        firebase_status = "OFFLINE"
+    
+    return {
+        "status": "running",
+        "firebase": firebase_status
+    }

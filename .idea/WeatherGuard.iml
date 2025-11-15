@@ -114,7 +114,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 36.0, extension level 17 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Dart SDK" level="project" />
+    <orderEntry type="library" name="Dart SDK" level="project" />
     <orderEntry type="library" name="Dart Packages" level="project" />
   </component>
 </module>

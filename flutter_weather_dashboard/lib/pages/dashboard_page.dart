@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../providers/weather_provider.dart';
@@ -13,13 +14,39 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    _loadData();
+  }
+
+  void _loadData() async {
     Future.microtask(() {
-      context.read<WeatherProvider>().listenToWeatherData();
+      context.read<WeatherProvider>().loadLatest();
+      context.read<WeatherProvider>().loadStats();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final latest = context.watch<WeatherProvider>().latest;
+    if (latest == null) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade600),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Đang tải dữ liệu...',
+                style: TextStyle(color: Colors.grey.shade700, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     final weatherList = context.watch<WeatherProvider>().weatherList;
 
     if (weatherList.isEmpty) {
@@ -42,9 +69,6 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       );
     }
-
-    final latest = weatherList.first;
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -80,6 +104,15 @@ class _DashboardPageState extends State<DashboardPage> {
               const SizedBox(height: 20),
 
               _buildHistorySection(weatherList),
+              const SizedBox(height: 20),
+              // Stats Section
+              Consumer<WeatherProvider>(
+                builder: (context, provider, child) {
+                  final stats = provider.stats;
+                  if (stats == null) return const SizedBox();
+                  return _buildStatsSection(stats);
+                },
+              ),
             ],
           ),
         ),
@@ -252,6 +285,140 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsSection(Map<String, dynamic> stats) {
+    // Chuyển dữ liệu sang double để chart
+    final tempMin = double.parse(stats['temperature']['min'].toString());
+    final tempMax = double.parse(stats['temperature']['max'].toString());
+    final tempAvg = double.parse(stats['temperature']['avg'].toString());
+
+    final humMin = double.parse(stats['humidity']['min'].toString());
+    final humMax = double.parse(stats['humidity']['max'].toString());
+    final humAvg = double.parse(stats['humidity']['avg'].toString());
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Thống kê',
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Biểu đồ nhiệt độ
+          const Text('🌡️ Nhiệt độ (°C)', style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 150,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: tempMax + 5,
+                barGroups: [
+                  BarChartGroupData(x: 0, barRods: [
+                    BarChartRodData(toY: tempMin, color: Colors.orange)
+                  ]),
+                  BarChartGroupData(x: 1, barRods: [
+                    BarChartRodData(toY: tempAvg, color: Colors.orangeAccent)
+                  ]),
+                  BarChartGroupData(x: 2, barRods: [
+                    BarChartRodData(toY: tempMax, color: Colors.deepOrange)
+                  ]),
+                ],
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        switch (value.toInt()) {
+                          case 0:
+                            return const Text('Min');
+                          case 1:
+                            return const Text('Avg');
+                          case 2:
+                            return const Text('Max');
+                        }
+                        return const Text('');
+                      },
+                    ),
+                  ),
+                  leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: true)),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Biểu đồ độ ẩm
+          const Text('💧 Độ ẩm (%)', style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 150,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: humMax + 10,
+                barGroups: [
+                  BarChartGroupData(x: 0, barRods: [
+                    BarChartRodData(toY: humMin, color: Colors.blue)
+                  ]),
+                  BarChartGroupData(x: 1, barRods: [
+                    BarChartRodData(toY: humAvg, color: Colors.lightBlue)
+                  ]),
+                  BarChartGroupData(x: 2, barRods: [
+                    BarChartRodData(toY: humMax, color: Colors.blueAccent)
+                  ]),
+                ],
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        switch (value.toInt()) {
+                          case 0:
+                            return const Text('Min');
+                          case 1:
+                            return const Text('Avg');
+                          case 2:
+                            return const Text('Max');
+                        }
+                        return const Text('');
+                      },
+                    ),
+                  ),
+                  leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: true)),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+          Text('Số lượng bản ghi: ${stats['records']}',
+              style: const TextStyle(fontSize: 16)),
         ],
       ),
     );
