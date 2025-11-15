@@ -790,7 +790,6 @@
           <option name="screenY" value="2400" />
         </PersistentDeviceSelectionData>
         <PersistentDeviceSelectionData>
-<<<<<<< HEAD
           <option name="api" value="36" />
           <option name="brand" value="samsung" />
           <option name="codename" value="pa2q" />
@@ -803,8 +802,6 @@
           <option name="screenY" value="2340" />
         </PersistentDeviceSelectionData>
         <PersistentDeviceSelectionData>
-=======
->>>>>>> 9ed23ba84ed3121fb2b9fdbb922cd3ddef4f00eb
           <option name="api" value="35" />
           <option name="brand" value="samsung" />
           <option name="codename" value="pa3q" />
