@@ -26,7 +26,6 @@ class WeatherProvider extends ChangeNotifier {
       // Mới nhất lên đầu
       _weatherList.sort((a, b) =>
           b['datetime'].compareTo(a['datetime']));
-
       notifyListeners();
     });
   }
