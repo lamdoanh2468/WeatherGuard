@@ -19,12 +19,14 @@ const int daylightOffset_sec = 0;
 const char* ssid = "Lam Duy2.4G";
 const char* password = "22111996";
 
-// Firebase
-const String FIREBASE_URL = "https://dht11anddht22-14fb9-default-rtdb.asia-southeast1.firebasedatabase.app";
+// Firebase (dùng push tự động tạo key)
+const String FIREBASE_URL = 
+  "https://dht11anddht22-14fb9-default-rtdb.asia-southeast1.firebasedatabase.app/sensor_data.json";
 
 DHT dht(DHTPIN, DHTTYPE);
 hd44780_I2Cexp lcd;
 
+// LẤY THỜI GIAN
 String getCurrentTime() {
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) return "N/A";
@@ -39,106 +41,96 @@ void setup() {
 
   int status = lcd.begin(16, 2);
   if (status) hd44780::fatalError(status);
-  lcd.clear();
   lcd.print("Connecting WiFi");
 
   // Connect WiFi
   WiFi.begin(ssid, password);
-  int dotPos = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    lcd.setCursor(dotPos, 1);
-    lcd.print(".");
-    dotPos = (dotPos + 1) % 16;
   }
 
-  Serial.println("\nWiFi connected!");
   lcd.clear();
   lcd.print("WiFi connected");
-  delay(1000);
 
-  // Configure NTP
+  // NTP time
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-  Serial.println("Time configured!");
-
-  struct tm timeinfo;
-  while (!getLocalTime(&timeinfo)) {
-    Serial.println("Waiting for NTP...");
-    delay(1000);
-  }
-  char buffer[30];
-  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
-  Serial.print("Current time: ");
-  Serial.println(buffer);
+  delay(1000);
 }
 
 void loop() {
-  float temp = dht.readTemperature();
-  float hum = dht.readHumidity();
-
-  if (isnan(temp) || isnan(hum)) {
-    lcd.setCursor(0, 0);
-    lcd.print("Sensor error!   ");
-    Serial.println("Failed to read DHT sensor!");
+  // Nếu rớt WiFi → tự reconnect
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi lost! Reconnecting...");
+    WiFi.reconnect();
     delay(2000);
     return;
   }
 
-  // Update LCD
+  float temp = dht.readTemperature();
+  float hum = dht.readHumidity();
+
+  // Sensor lỗi → bỏ vòng
+  if (isnan(temp) || isnan(hum)) {
+    Serial.println("DHT error!");
+    lcd.setCursor(0,0); lcd.print("Sensor error!");
+    delay(2000);
+    return;
+  }
+
+  // LCD
   lcd.setCursor(0, 0);
   lcd.print("Nhiet do: ");
   lcd.print(temp);
-  lcd.print((char)223); // °C
-  lcd.print("   ");      // xóa ký tự cũ thừa
+  lcd.print((char)223);
 
   lcd.setCursor(0, 1);
   lcd.print("Do am: ");
   lcd.print(hum);
   lcd.print("%   ");
 
-  // Send to Firebase
-  if (WiFi.status() == WL_CONNECTED) {
-    WiFiClientSecure client;
-    client.setInsecure();
-    HTTPClient http;
+  // JSON gửi Firebase
+  WiFiClientSecure client;
+  client.setInsecure();
 
-    String url = FIREBASE_URL + "/sensor_data.json";
-    String currentTime = getCurrentTime();
-    unsigned long timestamp = time(nullptr);
+  HTTPClient http;
+  http.setReuse(true);   // GIỮ KẾT NỐI
 
-    String jsonData = "{"
-                      "\"temperature\": " + String(temp) +
-                      ", \"humidity\": " + String(hum) +
-                      ", \"datetime\": \"" + currentTime + "\"" +
-                      ", \"timestamp\": " + String(timestamp) +
-                      "}";
+  String currentTime = getCurrentTime();
+  unsigned long timestamp = time(nullptr);
 
-    Serial.println("[DEBUG] Sending to Firebase:");
-    Serial.println(jsonData);
+  String jsonData =
+    "{\"temperature\": " + String(temp) +
+    ", \"humidity\": " + String(hum) +
+    ", \"datetime\": \"" + currentTime + "\"" +
+    ", \"timestamp\": " + String(timestamp) + "}";
 
-    if (http.begin(client, url)) {
-      http.addHeader("Content-Type", "application/json");
-      int httpResponseCode = http.POST(jsonData);
+  Serial.println("Sending:");
+  Serial.println(jsonData);
 
-      if (httpResponseCode > 0) {
-        Serial.print("[OK] Code: ");
-        Serial.println(httpResponseCode);
-        String payload = http.getString();
-        Serial.println(payload);
-      } else {
-        Serial.print("[ERROR] HTTP POST failed, code: ");
-        Serial.println(httpResponseCode);
-      }
-      http.end();
-    } else {
-      Serial.println("[ERROR] Cannot connect to Firebase URL");
-    }
-  } else {
-    Serial.println("WiFi disconnected!");
-    lcd.setCursor(0, 1);
-    lcd.print("WiFi lost...   ");
+  int httpCode = -1;
+
+  // TRY 1
+  if (http.begin(client, FIREBASE_URL)) {
+    http.addHeader("Content-Type", "application/json");
+    httpCode = http.POST(jsonData);
   }
 
-  delay(5000);
+  // TRY 2 nếu FAIL
+  if (httpCode <= 0) {
+    Serial.println("Retry sending...");
+    delay(1000);
+    httpCode = http.POST(jsonData);
+  }
+
+  if (httpCode > 0) {
+    Serial.print("Firebase OK: ");
+    Serial.println(httpCode);
+  } else {
+    Serial.print("Firebase ERROR: ");
+    Serial.println(httpCode);
+  }
+  
+  http.end();
+  delay(8000); // tránh spam Firebase
 }

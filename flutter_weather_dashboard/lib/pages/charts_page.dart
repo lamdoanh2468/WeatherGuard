@@ -588,7 +588,7 @@ class _ChartsPageState extends State<ChartsPage> {
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 12),  
               Text(
                 'Phân tích xu hướng',
                 style: TextStyle(
