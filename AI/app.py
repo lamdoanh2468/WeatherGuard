@@ -117,12 +117,12 @@ def get_stats():
         "temperature": {
             "min": df["temperature"].min(),
             "max": df["temperature"].max(),
-            "avg": df["temperature"].mean()
+            "avg": df["temperature"].mean().__round__(1)
         },
         "humidity": {
             "min": df["humidity"].min(),
             "max": df["humidity"].max(),
-            "avg": df["humidity"].mean()
+            "avg": df["humidity"].mean().__round__(1)
         },
         "records": len(df)
     }
