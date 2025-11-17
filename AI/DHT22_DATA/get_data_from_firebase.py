@@ -10,3 +10,4 @@ df.reset_index(drop=True, inplace=True)
 df.to_csv("dht22_clean.csv", index=False)
 
 print("Download + Clean Data Successful!")
+    
