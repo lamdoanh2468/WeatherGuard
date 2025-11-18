@@ -142,3 +142,66 @@ def health_check():
         "status": "running",
         "firebase": firebase_status
     }
+@app.get("/alerts")
+def get_alerts():
+    # --- BƯỚC 1: LẤY DỮ LIỆU MỚI NHẤT ---
+    data = requests.get(FIREBASE_URL).json()
+    if not data or "sensor_data" not in data:
+        return {"status": "unknown", "message": "Không có dữ liệu"}
+
+    df = pd.DataFrame.from_dict(data["sensor_data"], orient="index")
+
+    if df.empty:
+        return {"status": "unknown", "message": "Dữ liệu lỗi"}
+
+    latest = df.sort_values("timestamp").iloc[-1]
+    temp = float(latest["temperature"])
+    hum = float(latest["humidity"])
+
+    # --- BƯỚC 2: LOGIC CẢNH BÁO ---
+    alerts = []
+    
+    TEMP_HIGH_DANGER =37
+    TEMP_HIGH_WARN = 33
+    TEMP_LOW_WARN = 26
+
+    HUM_HIGH_WARN =80
+    HUM_LOW_WARN = 20
+    status_level = "normal"  # Mặc định là bình thường (green)
+
+    # Logic 1: Kiểm tra Nhiệt độ
+    if temp >= TEMP_HIGH_DANGER:
+        alerts.append(f"🔥 NGUY HIỂM: Nhiệt độ rất cao ({temp}°C)")
+        status_level = "danger" # Mức cao nhất -> Đỏ
+    elif temp >= TEMP_HIGH_WARN:
+        alerts.append(f"⚠️ Cảnh báo: Trời nóng ({temp}°C)")
+        if status_level != "danger": status_level = "warning" # Vàng
+
+    elif temp <= TEMP_LOW_WARN:
+        alerts.append(f"❄️ Cảnh báo: Trời lạnh ({temp}°C)")
+        if status_level != "danger": status_level = "warning"
+
+    # Logic 2: Kiểm tra Độ ẩm
+    if hum >= HUM_HIGH_WARN:
+        alerts.append(f"💧 Độ ẩm quá cao ({hum}%) - Coi chừng nồm mốc")
+        if status_level != "danger": status_level = "warning"
+    elif hum <= HUM_LOW_WARN:
+        alerts.append(f"🌵 Độ ẩm quá thấp ({hum}%) - Khô hanh")
+        if status_level != "danger": status_level = "warning"
+
+    # Logic 3: Cảnh báo Phức hợp (Combo nguy hiểm nhất)
+    # Ví dụ: Nhiệt cao > 38 VÀ Ẩm thấp < 30 => Nguy cơ cháy rừng/hỏa hoạn cao
+    if temp > 38 and hum < 30:
+        alerts.insert(0, "🆘 BÁO ĐỘNG: Nguy cơ hỏa hoạn cao!") # Đẩy lên đầu
+        status_level = "danger"
+
+    # --- BƯỚC 3: TRẢ VỀ KẾT QUẢ ---
+    return {
+        "status_level": status_level, # normal | warning | danger
+        "has_alert": len(alerts) > 0,
+        "messages": alerts,
+        "data": {
+            "temp": temp,
+            "hum": hum
+        }
+    }

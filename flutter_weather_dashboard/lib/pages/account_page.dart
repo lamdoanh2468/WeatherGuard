@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/weather_provider.dart';
 
 class AccountPage extends StatelessWidget {
@@ -11,71 +10,177 @@ class AccountPage extends StatelessWidget {
     final provider = context.watch<WeatherProvider>();
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          "Account",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      extendBodyBehindAppBar: true,
+
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
+            colors: [
+              Color(0xFF74ABE2),
+              Color(0xFF5583EE),
+              Color(0xFF4961DC),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF74ABE2), // soft blue
-              Color(0xFF5583EE), // bright blue
-              Color(0xFF4961DC), // rich indigo
-            ],
-            stops: [0.0, 0.65, 1.0],
           ),
         ),
+
         child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 110, 16, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _profileHeader(),
+              const SizedBox(height: 30),
+
+              _section("Monitor Stations"),
+              _quickCard(
+                icon: Icons.sensors,
+                title: "My Stations",
+                subtitle: "View and manage your monitoring stations",
+                context: context,
+                route: '/my-stations',
+              ),
+              _quickCard(
+                icon: Icons.add_circle_outline,
+                title: "Add New Station",
+                subtitle: "Register a new monitoring device",
+                context: context,
+                route: '/add-station',
+              ),
+
+              const SizedBox(height: 24),
+
+              _section("Alerts"),
+              _quickCard(
+                icon: Icons.notifications_active,
+                title: "Alert Thresholds",
+                subtitle: "Customize your alert conditions",
+                context: context,
+                route: '/alert-settings',
+              ),
+              const SizedBox(height: 32),
+              Center(
+                child: _logoutButton(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------- UI Components ----------------
+
+  Widget _profileHeader() {
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                )
+              ],
+            ),
+            child: const CircleAvatar(
+              radius: 45,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person, size: 48, color: Colors.blueAccent),
+            ),
+          ),
+          const SizedBox(height: 14),
+          const Text(
+            "User",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "user@example.com",
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.85),
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 14),
+          FilledButton.tonal(
+            onPressed: () {},
+            child: const Text("Edit Profile"),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _section(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          fontSize: 17,
+        ),
+      ),
+    );
+  }
+
+  Widget _quickCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required BuildContext context,
+    required String route,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        elevation: 3,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => Navigator.pushNamed(context, route),
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                // 4.1 - Account Info
-                _buildSectionTitle(context, 'Account Information'),
-                const SizedBox(height: 12),
-                _buildProfileCard(context),
-                const SizedBox(height: 24),
-
-                // REMOVED: City Settings section (không còn cần vì provider không có city)
-
-                // 4.2 - Station Management
-                _buildSectionTitle(context, 'Monitor Station Management'),
-                const SizedBox(height: 12),
-                _buildStationManagementCard(context),
-                const SizedBox(height: 24),
-
-                // 4.3 - Alert Settings
-                _buildSectionTitle(context, 'Alerts'),
-                const SizedBox(height: 12),
-                _buildAlertSettingsCard(context),
-                const SizedBox(height: 24),
-
-                // API Keys
-                _buildSectionTitle(context, 'System Configuration'),
-                const SizedBox(height: 12),
-                _buildSystemConfigCard(context),
-                const SizedBox(height: 24),
-
-                // Logout
-                Center(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _handleLogout(context),
-                    icon: const Icon(Icons.logout, color: Colors.red),
-                    label: const Text(
-                      'Logout',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.red),
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 12,
-                      ),
-                    ),
+                Icon(icon, size: 32, color: Colors.blueAccent),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 4),
+                      Text(subtitle,
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black54)),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black45),
               ],
             ),
           ),
@@ -84,223 +189,122 @@ class AccountPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: Colors.white,
+  Widget _logoutButton(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: () => _handleLogout(context),
+      icon: const Icon(Icons.logout, color: Colors.red),
+      label: const Text(
+        "Logout",
+        style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+      ),
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(color: Colors.red),
+        backgroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 34, vertical: 14),
       ),
     );
   }
 
-  // 4.1 - Account Info
-  Widget _buildProfileCard(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shadowColor: Colors.black26,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Colors.blue.shade50,
-            ],
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              const CircleAvatar(
-                radius: 40,
-                backgroundColor: Colors.transparent,
-                backgroundImage: NetworkImage(''),
-                child: Icon(Icons.person, size: 40, color: Colors.blueAccent),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'User',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'user@example.com',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () => _navigateToProfileEdit(context),
-                  icon: const Icon(Icons.edit),
-                  label: const Text('Edit Profile'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // REMOVED: _buildCityInput widget
-
-  // 4.2 - Station Management
-  Widget _buildStationManagementCard(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.sensors, color: Colors.green),
-            title: const Text(
-              'My Stations',
-              style: TextStyle(fontWeight: FontWeight.w500),
-            ),
-            subtitle: const Text('View and manage your monitoring stations'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => _navigateToMyStations(context),
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.add_circle_outline, color: Colors.blue),
-            title: const Text('Add New Station'),
-            onTap: () => _navigateToAddStation(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 4.3 - Alert Settings
-  Widget _buildAlertSettingsCard(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Column(
-        children: [
-          ListTile(
-            leading:
-            const Icon(Icons.notifications_active, color: Colors.orange),
-            title: const Text(
-              'Alert Thresholds',
-              style: TextStyle(fontWeight: FontWeight.w500),
-            ),
-            subtitle: const Text('Customize automatic alert thresholds'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => _navigateToAlertSettings(context),
-          ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildAlertThresholdItem(
-                  'High Temperature',
-                  '> 35°C',
-                  Icons.thermostat,
-                  Colors.red,
-                ),
-                const SizedBox(height: 8),
-                _buildAlertThresholdItem(
-                  'High Humidity',
-                  '> 80%',
-                  Icons.water_drop,
-                  Colors.blue,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAlertThresholdItem(
-      String label,
-      String value,
-      IconData icon,
-      Color color,
-      ) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: color),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(label, style: const TextStyle(fontSize: 14)),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSystemConfigCard(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: ListTile(
-        leading: const Icon(Icons.vpn_key, color: Colors.deepPurple),
-        title: const Text(
-          'API Keys Settings',
-          style: TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: const Text('Configure API keys for the system'),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () => Navigator.pushNamed(context, '/api-keys'),
-      ),
-    );
-  }
-
-  // Navigation handlers
-  void _navigateToProfileEdit(BuildContext context) {
-    Navigator.pushNamed(context, '/profile-edit');
-  }
-
-  void _navigateToMyStations(BuildContext context) {
-    Navigator.pushNamed(context, '/my-stations');
-  }
-
-  void _navigateToAddStation(BuildContext context) {
-    Navigator.pushNamed(context, '/add-station');
-  }
-
-  void _navigateToAlertSettings(BuildContext context) {
-    Navigator.pushNamed(context, '/alert-settings');
-  }
+  // ---------------- Logic ----------------
 
   void _handleLogout(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to log out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Implement logout logic
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Logged out successfully')),
-              );
-            },
-            child: const Text('Logout'),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon cảnh báo
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 18),
+
+                // Title
+                const Text(
+                  "Log Out?",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Subtitle
+                Text(
+                  "Are you sure you want to log out of your account?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey[700],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey.shade400),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text("Cancel"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Logged out successfully"),
+                            ),
+                          );
+                        },
+                        child: const Text("Logout"),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
+
 }
