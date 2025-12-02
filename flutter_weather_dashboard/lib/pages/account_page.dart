@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/weather_provider.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
 
+class _AccountPageState extends State<AccountPage> {
+  double _temperatureThreshold = 35;
+  bool _temperatureAlertEnabled = true;
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<WeatherProvider>();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -21,7 +25,6 @@ class AccountPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       extendBodyBehindAppBar: true,
-
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -34,15 +37,13 @@ class AccountPage extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
         ),
-
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 110, 16, 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _profileHeader(),
+              _accountManagementCards(context),
               const SizedBox(height: 30),
-
               _section("Monitor Stations"),
               _quickCard(
                 icon: Icons.sensors,
@@ -58,17 +59,9 @@ class AccountPage extends StatelessWidget {
                 context: context,
                 route: '/add-station',
               ),
-
               const SizedBox(height: 24),
-
               _section("Alerts"),
-              _quickCard(
-                icon: Icons.notifications_active,
-                title: "Alert Thresholds",
-                subtitle: "Customize your alert conditions",
-                context: context,
-                route: '/alert-settings',
-              ),
+              _thresholdCard(),
               const SizedBox(height: 32),
               Center(
                 child: _logoutButton(context),
@@ -82,51 +75,31 @@ class AccountPage extends StatelessWidget {
 
   // ---------------- UI Components ----------------
 
-  Widget _profileHeader() {
-    return Center(
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                )
-              ],
-            ),
-            child: const CircleAvatar(
-              radius: 45,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, size: 48, color: Colors.blueAccent),
-            ),
-          ),
-          const SizedBox(height: 14),
-          const Text(
-            "User",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            "user@example.com",
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.85),
-              fontSize: 15,
-            ),
-          ),
-          const SizedBox(height: 14),
-          FilledButton.tonal(
-            onPressed: () {},
-            child: const Text("Edit Profile"),
-          )
-        ],
-      ),
+  Widget _accountManagementCards(BuildContext context) {
+    return Column(
+      children: [
+        _quickCard(
+          icon: Icons.app_registration,
+          title: "Đăng ký",
+          subtitle: "Tạo tài khoản WeatherGuard",
+          context: context,
+          route: '/register',
+        ),
+        _quickCard(
+          icon: Icons.login,
+          title: "Đăng nhập",
+          subtitle: "Truy cập hệ thống",
+          context: context,
+          route: '/login',
+        ),
+        _quickCard(
+          icon: Icons.manage_accounts,
+          title: "Quản lý Hồ sơ",
+          subtitle: "Cập nhật thông tin cá nhân",
+          context: context,
+          route: '/profile',
+        ),
+      ],
     );
   }
 
@@ -139,6 +112,70 @@ class AccountPage extends StatelessWidget {
           color: Colors.white,
           fontWeight: FontWeight.w700,
           fontSize: 17,
+        ),
+      ),
+    );
+  }
+
+  Widget _thresholdCard() {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                "Cảnh báo nhiệt độ cao",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: const Text("Thông báo khi vượt quá ngưỡng đặt trước"),
+              value: _temperatureAlertEnabled,
+              onChanged: (value) {
+                setState(() => _temperatureAlertEnabled = value);
+              },
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Ngưỡng: ${_temperatureThreshold.toInt()}°C",
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            Slider(
+              min: 25,
+              max: 50,
+              divisions: 25,
+              value: _temperatureThreshold,
+              label: "${_temperatureThreshold.toInt()}°C",
+              onChanged: _temperatureAlertEnabled
+                  ? (value) => setState(() => _temperatureThreshold = value)
+                  : null,
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.tonalIcon(
+                onPressed: _temperatureAlertEnabled
+                    ? () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Ngưỡng cảnh báo đặt ở ${_temperatureThreshold.toInt()}°C",
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
+                icon: const Icon(Icons.save),
+                label: const Text("Lưu ngưỡng"),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -180,7 +217,8 @@ class AccountPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black45),
+                const Icon(Icons.arrow_forward_ios,
+                    size: 18, color: Colors.black45),
               ],
             ),
           ),
@@ -306,5 +344,4 @@ class AccountPage extends StatelessWidget {
       },
     );
   }
-
 }

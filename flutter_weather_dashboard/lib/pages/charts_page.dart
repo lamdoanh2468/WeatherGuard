@@ -575,11 +575,11 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
                             ),
                           ),
                         ],
-                        lineTouchData: LineTouchData(
+                        lineTouchData: const LineTouchData(
                           touchTooltipData: LineTouchTooltipData(
                             tooltipBgColor: Colors.black87,
                             tooltipRoundedRadius: 8,
-                            tooltipPadding: const EdgeInsets.all(8),
+                            tooltipPadding: EdgeInsets.all(8),
                           ),
                         ),
                       ),

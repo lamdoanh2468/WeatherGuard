@@ -12,7 +12,7 @@ Original file is located at
 # =========================
 import numpy as np
 import pandas as pd
-
+import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
@@ -33,7 +33,9 @@ RANDOM_STATE = 42
 # =========================
 # 3. LOAD & PREPROCESS DATA
 # =========================
-df = pd.read_csv("../AI/DHT22_DATA/dht22_clean_processed.csv")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(BASE_DIR,"..","DHT22_DATA","dht22_clean_processed.csv")
+df = pd.read_csv(csv_path)
 
 df["datetime"] = pd.to_datetime(df["datetime"])
 df = df.sort_values("datetime")

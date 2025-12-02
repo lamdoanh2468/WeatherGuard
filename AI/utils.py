@@ -9,7 +9,7 @@ from tensorflow.keras.models import load_model
 # LOAD MODEL (from training)
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.path.join(BASE_DIR, "models")
+MODEL_DIR = os.path.join(BASE_DIR,"train_dht22_data", "models")
 
 model = load_model(os.path.join(MODEL_DIR, "lstm_model.h5"), compile=False)
 
