@@ -40,93 +40,91 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
-        return MaterialApp(
-          title: 'WeatherGuard',
-          debugShowCheckedModeBanner: false,
-          theme: themeProvider.themeData,
-          home: Scaffold(
-            appBar: AppBar(
-              title: Text(_titles[_index]),
-              actions: [
-                // Toggle Theme Button
-                IconButton(
-                  onPressed: () {
-                    themeProvider.toggleTheme();
-                  },
-                  icon: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) {
-                      return RotationTransition(
-                        turns: animation,
-                        child: FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Icon(
-                      themeProvider.isDarkMode
-                          ? Icons.light_mode
-                          : Icons.dark_mode,
-                      key: ValueKey(themeProvider.isDarkMode),
-                      color: themeProvider.isDarkMode
-                          ? Colors.amber
-                          : Colors.indigo,
-                      size: 24,
-                    ),
-                  ),
-                  tooltip: themeProvider.isDarkMode
-                      ? 'Chế độ sáng'
-                      : 'Chế độ tối',
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pushNamed(context, '/api-keys'),
-                  icon: const Icon(Icons.vpn_key_rounded),
-                  tooltip: 'Cài đặt API',
-                ),
-              ],
-            ),
-            body: AnimatedSwitcher(
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_titles[_index]),
+        actions: [
+          // Toggle Theme Button
+          IconButton(
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+            icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: _pages[_index],
+              transitionBuilder: (child, animation) {
+                return RotationTransition(
+                  turns: animation,
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: Icon(
+                themeProvider.isDarkMode
+                    ? Icons.light_mode
+                    : Icons.dark_mode,
+                key: ValueKey(themeProvider.isDarkMode),
+                color: themeProvider.isDarkMode
+                    ? Colors.amber
+                    : Colors.indigo,
+                size: 24,
+              ),
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _index,
-              onTap: (i) => setState(() => _index = i),
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.dashboard_outlined),
-                  activeIcon: Icon(Icons.dashboard),
-                  label: 'Tổng quan',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.show_chart_outlined),
-                  activeIcon: Icon(Icons.show_chart),
-                  label: 'Biểu đồ',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.map_outlined),
-                  activeIcon: Icon(Icons.map),
-                  label: 'Bản đồ',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.notifications_outlined),
-                  activeIcon: Icon(Icons.notifications),
-                  label: 'Cảnh báo',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline),
-                  activeIcon: Icon(Icons.person),
-                  label: 'Tài khoản',
-                ),
-              ],
-            ),
+            tooltip: themeProvider.isDarkMode
+                ? 'Chế độ sáng'
+                : 'Chế độ tối',
           ),
-        );
-      },
+          IconButton(
+            onPressed: () {
+              // Hiển thị dialog hoặc bottom sheet cho API settings
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('API Settings coming soon')),
+              );
+            },
+            icon: const Icon(Icons.vpn_key_rounded),
+            tooltip: 'Cài đặt API',
+          ),
+        ],
+      ),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: _pages[_index],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _index,
+        onTap: (i) => setState(() => _index = i),
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard_outlined),
+            activeIcon: Icon(Icons.dashboard),
+            label: 'Tổng quan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart_outlined),
+            activeIcon: Icon(Icons.show_chart),
+            label: 'Biểu đồ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map_outlined),
+            activeIcon: Icon(Icons.map),
+            label: 'Bản đồ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_outlined),
+            activeIcon: Icon(Icons.notifications),
+            label: 'Cảnh báo',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Tài khoản',
+          ),
+        ],
+      ),
     );
   }
 }

@@ -14,7 +14,6 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
@@ -24,7 +23,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AlertsProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider())
       ],
-      child: const App(),
+      child: const MyApp(),
     ),
   );
 }
@@ -34,15 +33,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WeatherGuard',
-      // QUAN TRỌNG: Khai báo Routes ở đây
-      initialRoute: '/login',
-      routes: {
-        '/account': (context) => const AccountPage(),
-        '/login': (context) => const LoginPage(),
-        '/register': (context) => const RegisterPage(),
-        '/profile': (context) => const ProfilePage(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'WeatherGuard',
+          debugShowCheckedModeBanner: false,
+          theme: themeProvider.themeData,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const App(),
+            '/account': (context) => const AccountPage(),
+            '/login': (context) => const LoginPage(),
+            '/register': (context) => const RegisterPage(),
+            '/profile': (context) => const ProfilePage(),
+          },
+        );
       },
     );
   }
