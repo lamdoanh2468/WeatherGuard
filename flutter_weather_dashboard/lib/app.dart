@@ -77,16 +77,6 @@ class _AppState extends State<App> {
                 ? 'Chế độ sáng'
                 : 'Chế độ tối',
           ),
-          IconButton(
-            onPressed: () {
-              // Hiển thị dialog hoặc bottom sheet cho API settings
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('API Settings coming soon')),
-              );
-            },
-            icon: const Icon(Icons.vpn_key_rounded),
-            tooltip: 'Cài đặt API',
-          ),
         ],
       ),
       body: AnimatedSwitcher(

@@ -184,7 +184,7 @@ class _DashboardPageState extends State<DashboardPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Dashboard',
+                'Tổng quan dữ liệu',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,

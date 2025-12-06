@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_weather_dashboard/auth/login_page.dart';
 import 'package:flutter_weather_dashboard/auth/profile_page.dart';
 import 'package:flutter_weather_dashboard/auth/register_page.dart';
+import 'package:flutter_weather_dashboard/stations/my_station.dart';
 import 'package:flutter_weather_dashboard/firebase_options.dart';
 import 'package:flutter_weather_dashboard/pages/account_page.dart';
 import 'package:flutter_weather_dashboard/providers/alert_provider.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
             '/profile': (context) => const ProfilePage(),
+            '/my-station': (context) => const MyStationPage()
           },
         );
       },

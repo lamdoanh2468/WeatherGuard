@@ -2,10 +2,31 @@ import requests
 from fastapi import FastAPI
 import pandas as pd
 from utils import forecast_and_cluster
-
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+import requests
 app = FastAPI()
 
 FIREBASE_URL = "https://dht11anddht22-14fb9-default-rtdb.asia-southeast1.firebasedatabase.app/.json"
+
+# def fetch_firebase(path="sensor_data", limit=0):
+#     """Lấy đúng nhánh cần thiết, tránh tải cả database"""
+#     base = "https://dht11anddht22-14fb9-default-rtdb.asia-southeast1.firebasedatabase.app"
+
+#     url = f"{base}/{path}.json"
+
+#     if limit > 0:
+#         url += '?orderBy="$key"&limitToLast={}"'.format(limit)
+
+#     # Retry để tránh lỗi IncompleteRead
+#     session = requests.Session()
+#     retry = Retry(total=5, backoff_factor=1)
+#     session.mount("https://", HTTPAdapter(max_retries=retry))
+
+#     r = session.get(url, timeout=15)
+#     r.raise_for_status()
+#     return r.json()
+
 
 @app.get("/")
 def home():
@@ -205,3 +226,7 @@ def get_alerts():
             "hum": hum
         }
     }
+    from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+import requests
+

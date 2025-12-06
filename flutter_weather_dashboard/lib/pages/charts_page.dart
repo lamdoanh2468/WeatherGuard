@@ -39,7 +39,8 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
+    ).animate(
+        CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
 
     _fadeController.forward();
     _slideController.forward();
@@ -184,8 +185,10 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
             ),
             child: Row(
               children: [
-                _buildViewButton('realtime', 'Thời gian thực', Icons.timeline),
-                _buildViewButton('history', 'Lịch sử', Icons.history_rounded),
+                _buildViewButton(
+                    'realtime', 'Dữ liệu thời gian thực ', Icons.timeline),
+                _buildViewButton(
+                    'history', 'Lịch sử thu thập', Icons.history_rounded),
               ],
             ),
           ),
@@ -210,8 +213,8 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? LinearGradient(
-                  colors: [Colors.blue.shade600, Colors.blue.shade400],
-                )
+                        colors: [Colors.blue.shade600, Colors.blue.shade400],
+                      )
                     : null,
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -229,7 +232,8 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.grey.shade600,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.w500,
                       fontSize: 14,
                     ),
                   ),
@@ -255,14 +259,14 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
             .asMap()
             .entries
             .map((e) => FlSpot(
-            e.key.toDouble(), (e.value['temperature'] as num).toDouble()))
+                e.key.toDouble(), (e.value['temperature'] as num).toDouble()))
             .toList();
 
         final humPoints = data
             .asMap()
             .entries
             .map((e) => FlSpot(
-            e.key.toDouble(), (e.value['humidity'] as num).toDouble()))
+                e.key.toDouble(), (e.value['humidity'] as num).toDouble()))
             .toList();
 
         return Column(
@@ -297,14 +301,14 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
             .asMap()
             .entries
             .map((e) => FlSpot(
-            e.key.toDouble(), (e.value['temperature'] as num).toDouble()))
+                e.key.toDouble(), (e.value['temperature'] as num).toDouble()))
             .toList();
 
         final humPoints = data
             .asMap()
             .entries
             .map((e) => FlSpot(
-            e.key.toDouble(), (e.value['humidity'] as num).toDouble()))
+                e.key.toDouble(), (e.value['humidity'] as num).toDouble()))
             .toList();
 
         return Column(
@@ -531,8 +535,10 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
                         borderData: FlBorderData(
                           show: true,
                           border: Border(
-                            bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-                            left: BorderSide(color: Colors.grey.shade300, width: 1),
+                            bottom: BorderSide(
+                                color: Colors.grey.shade300, width: 1),
+                            left: BorderSide(
+                                color: Colors.grey.shade300, width: 1),
                           ),
                         ),
                         lineBarsData: [
@@ -595,7 +601,8 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
   }
 
   Widget _buildStatCards(List<Map<String, dynamic>> data) {
-    final temps = data.map((e) => (e['temperature'] as num).toDouble()).toList();
+    final temps =
+        data.map((e) => (e['temperature'] as num).toDouble()).toList();
     final hums = data.map((e) => (e['humidity'] as num).toDouble()).toList();
 
     final tempMin = temps.reduce((a, b) => a < b ? a : b);
@@ -638,15 +645,15 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
   }
 
   Widget _buildStatCard(
-      String title,
-      double min,
-      double max,
-      double avg,
-      MaterialColor color,
-      IconData icon,
-      String unit,
-      int delay,
-      ) {
+    String title,
+    double min,
+    double max,
+    double avg,
+    MaterialColor color,
+    IconData icon,
+    String unit,
+    int delay,
+  ) {
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
       duration: Duration(milliseconds: 600 + delay),
@@ -729,7 +736,8 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
       return const SizedBox();
     }
 
-    final temps = data.map((e) => (e['temperature'] as num).toDouble()).toList();
+    final temps =
+        data.map((e) => (e['temperature'] as num).toDouble()).toList();
     final hums = data.map((e) => (e['humidity'] as num).toDouble()).toList();
 
     final tempTrend = _calculateTrend(temps);
@@ -766,7 +774,10 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.amber.shade400, Colors.amber.shade700],
+                            colors: [
+                              Colors.amber.shade400,
+                              Colors.amber.shade700
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
@@ -820,12 +831,12 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
   }
 
   Widget _buildTrendCard(
-      String label,
-      String trend,
-      IconData icon,
-      MaterialColor color,
-      int delay,
-      ) {
+    String label,
+    String trend,
+    IconData icon,
+    MaterialColor color,
+    int delay,
+  ) {
     IconData trendIcon;
     Color trendColor;
     if (trend.contains('Tăng')) {
@@ -983,7 +994,10 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.green.shade400, Colors.green.shade600],
+                            colors: [
+                              Colors.green.shade400,
+                              Colors.green.shade600
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
@@ -1021,7 +1035,8 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
                         centerSpaceRadius: 55,
                         borderData: FlBorderData(show: false),
                         pieTouchData: PieTouchData(
-                          touchCallback: (FlTouchEvent event, pieTouchResponse) {},
+                          touchCallback:
+                              (FlTouchEvent event, pieTouchResponse) {},
                         ),
                       ),
                     ),
@@ -1076,7 +1091,8 @@ class _ChartsPageState extends State<ChartsPage> with TickerProviderStateMixin {
   }
 
   Widget _buildPieLegend(String label, int count, int total) {
-    final percentage = total > 0 ? (count / total * 100).toStringAsFixed(1) : '0.0';
+    final percentage =
+        total > 0 ? (count / total * 100).toStringAsFixed(1) : '0.0';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(

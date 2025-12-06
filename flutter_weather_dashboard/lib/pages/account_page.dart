@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/weather_provider.dart';
+import '../providers/auth_provider.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
+
   @override
   State<AccountPage> createState() => _AccountPageState();
 }
@@ -11,19 +12,13 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   double _temperatureThreshold = 35;
   bool _temperatureAlertEnabled = true;
+
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+    final isLoggedIn = authProvider.user != null;
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          "Account",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
@@ -38,34 +33,43 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 110, 16, 32),
+          padding: const EdgeInsets.fromLTRB(16, 60, 16, 150),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _accountManagementCards(context),
-              const SizedBox(height: 30),
-              _section("Monitor Stations"),
+              // Hiển thị thông tin user nếu đã đăng nhập
+              if (isLoggedIn) ...[
+                _buildUserInfo(authProvider),
+                const SizedBox(height: 24),
+              ],
+
+              // Hiển thị auth cards nếu chưa đăng nhập
+              if (!isLoggedIn) ...[
+                _accountManagementCards(context),
+                const SizedBox(height: 30),
+              ],
+
+              // Phần Monitor Stations (hiển thị cho cả logged in và chưa)
+              _section("Trạm thời tiết"),
               _quickCard(
                 icon: Icons.sensors,
-                title: "My Stations",
-                subtitle: "View and manage your monitoring stations",
+                title: "Trạm của tôi",
+                subtitle: "Theo dõi và quản lí trạm thời tiết",
                 context: context,
-                route: '/my-stations',
-              ),
-              _quickCard(
-                icon: Icons.add_circle_outline,
-                title: "Add New Station",
-                subtitle: "Register a new monitoring device",
-                context: context,
-                route: '/add-station',
+                route: '/my-station',
               ),
               const SizedBox(height: 24),
+
+              // Phần Alerts
               _section("Alerts"),
               _thresholdCard(),
               const SizedBox(height: 32),
-              Center(
-                child: _logoutButton(context),
-              ),
+
+              // Logout button (chỉ hiển thị khi đã đăng nhập)
+              if (isLoggedIn)
+                Center(
+                  child: _logoutButton(context, authProvider),
+                ),
             ],
           ),
         ),
@@ -74,6 +78,90 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   // ---------------- UI Components ----------------
+
+  Widget _buildUserInfo(AuthProvider authProvider) {
+    final user = authProvider.user!;
+    final displayName = user.displayName ?? user.email ?? 'User';
+    final email = user.email ?? '';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Avatar
+          Container(
+            width: 70,
+            height: 70,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF5583EE), Color(0xFF4961DC)],
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                displayName[0].toUpperCase(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+
+          // User info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  email,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.pushNamed(context, '/profile'),
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('Chỉnh sửa thông tin cá nhân'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _accountManagementCards(BuildContext context) {
     return Column(
@@ -91,13 +179,6 @@ class _AccountPageState extends State<AccountPage> {
           subtitle: "Truy cập hệ thống",
           context: context,
           route: '/login',
-        ),
-        _quickCard(
-          icon: Icons.manage_accounts,
-          title: "Quản lý Hồ sơ",
-          subtitle: "Cập nhật thông tin cá nhân",
-          context: context,
-          route: '/profile',
         ),
       ],
     );
@@ -227,12 +308,12 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Widget _logoutButton(BuildContext context) {
+  Widget _logoutButton(BuildContext context, AuthProvider authProvider) {
     return OutlinedButton.icon(
-      onPressed: () => _handleLogout(context),
+      onPressed: () => _handleLogout(context, authProvider),
       icon: const Icon(Icons.logout, color: Colors.red),
       label: const Text(
-        "Logout",
+        "Đăng xuất tài khoản",
         style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
       ),
       style: OutlinedButton.styleFrom(
@@ -245,7 +326,7 @@ class _AccountPageState extends State<AccountPage> {
 
   // ---------------- Logic ----------------
 
-  void _handleLogout(BuildContext context) {
+  void _handleLogout(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -277,7 +358,7 @@ class _AccountPageState extends State<AccountPage> {
 
                 // Title
                 const Text(
-                  "Log Out?",
+                  "Đăng xuất khỏi tài khoản",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -288,7 +369,7 @@ class _AccountPageState extends State<AccountPage> {
 
                 // Subtitle
                 Text(
-                  "Are you sure you want to log out of your account?",
+                  "Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
@@ -311,7 +392,7 @@ class _AccountPageState extends State<AccountPage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text("Cancel"),
+                        child: const Text("Huỷ"),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -324,15 +405,22 @@ class _AccountPageState extends State<AccountPage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Logged out successfully"),
-                            ),
-                          );
+
+                          // Thực hiện logout
+                          await authProvider.signOut();
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Đăng xuất tài khoản thành công"),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
                         },
-                        child: const Text("Logout"),
+                        child: const Text("Xác nhận"),
                       ),
                     ),
                   ],
