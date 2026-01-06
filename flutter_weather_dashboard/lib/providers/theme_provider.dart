@@ -12,7 +12,7 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Light Theme
+  // Giao diện sáng (Light Theme)
   static final ThemeData _lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
@@ -47,7 +47,7 @@ class ThemeProvider extends ChangeNotifier {
     ),
   );
 
-  // Dark Theme
+  // Giao diện tối (Dark Theme)
   static final ThemeData _darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,

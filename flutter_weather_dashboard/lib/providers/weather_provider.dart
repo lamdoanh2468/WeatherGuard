@@ -26,23 +26,30 @@ class WeatherProvider extends ChangeNotifier {
       final response = await http.get(Uri.parse('$apiBase/latest'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        latest = data;
 
-        // Lưu lại history tối đa 10 bản ghi
-        if (data.isNotEmpty) {
-          // Lấy timestamp của bản ghi mới nhất trong weatherList
-          final lastTimestamp =
-              weatherList.isNotEmpty ? weatherList.first['timestamp'] : null;
+        // TỐI ƯU HÓA: Kiểm tra xem dữ liệu có thực sự thay đổi không
+        final currentTimestamp = latest?['timestamp'];
+        final newTimestamp = data['timestamp'];
 
-          // Chỉ thêm nếu timestamp khác
-          if (lastTimestamp != data['timestamp']) {
-            weatherList.insert(0, data);
-            if (weatherList.length > 10) {
-              weatherList = weatherList.take(10).toList();
+        if (currentTimestamp != newTimestamp) {
+          latest = data;
+
+          // Lưu lại lịch sử tối đa 10 bản ghi
+          if (data.isNotEmpty) {
+            // Lấy timestamp của bản ghi mới nhất trong weatherList
+            final lastTimestamp =
+                weatherList.isNotEmpty ? weatherList.first['timestamp'] : null;
+
+            // Chỉ thêm nếu timestamp khác
+            if (lastTimestamp != newTimestamp) {
+              weatherList.insert(0, data);
+              if (weatherList.length > 10) {
+                weatherList = weatherList.take(10).toList();
+              }
             }
           }
+          notifyListeners();
         }
-        notifyListeners();
       } else {
         debugPrint('Failed to fetch latest weather: ${response.statusCode}');
       }
@@ -70,9 +77,9 @@ class WeatherProvider extends ChangeNotifier {
       final response = await http.get(Uri.parse('$apiBase/realtime'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // data phải trả về list 60 bản ghi forecast + cluster
+        // data phải trả về danh sách 60 bản ghi dự báo + cụm
         // lưu vào weatherList hoặc chartData
-        // mình dùng weatherList cho chart
+        // mình dùng weatherList cho biểu đồ
         if (data is Map && data.containsKey('forecast')) {
           weatherList = List<Map<String, dynamic>>.from(data['forecast']);
         }
@@ -82,6 +89,7 @@ class WeatherProvider extends ChangeNotifier {
       debugPrint('Error fetching realtime: $e');
     }
   }
+
   Future<void> loadStats() async => _fetchStats();
 
   @override

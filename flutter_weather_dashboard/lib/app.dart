@@ -7,6 +7,8 @@ import 'pages/dashboard_page.dart';
 import 'pages/maps_page.dart';
 import 'providers/theme_provider.dart';
 
+import 'package:flutter_weather_dashboard/providers/navigation_provider.dart';
+
 class App extends StatefulWidget {
   const App({super.key});
 
@@ -15,8 +17,6 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  int _index = 0;
-
   final _pages = const [
     DashboardPage(),
     ChartsPage(),
@@ -26,11 +26,11 @@ class _AppState extends State<App> {
   ];
 
   final _titles = const [
-    'Weather Dashboard',
-    'Charts & Insight',
-    'Maps',
-    'Notifications & Alerts',
-    'User Account',
+    'Tổng Quan Thời Tiết',
+    'Biểu Đồ & Phân Tích',
+    'Bản Đồ',
+    'Thông Báo & Cảnh Báo',
+    'Tài Khoản',
   ];
 
   @override
@@ -41,12 +41,14 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final navigationProvider = Provider.of<NavigationProvider>(context);
+    final currentIndex = navigationProvider.currentIndex;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titles[_index]),
+        title: Text(_titles[currentIndex]),
         actions: [
-          // Toggle Theme Button
+          // Nút chuyển đổi giao diện (Toggle Theme Button)
           IconButton(
             onPressed: () {
               themeProvider.toggleTheme();
@@ -63,29 +65,23 @@ class _AppState extends State<App> {
                 );
               },
               child: Icon(
-                themeProvider.isDarkMode
-                    ? Icons.light_mode
-                    : Icons.dark_mode,
+                themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
                 key: ValueKey(themeProvider.isDarkMode),
-                color: themeProvider.isDarkMode
-                    ? Colors.amber
-                    : Colors.indigo,
+                color: themeProvider.isDarkMode ? Colors.amber : Colors.indigo,
                 size: 24,
               ),
             ),
-            tooltip: themeProvider.isDarkMode
-                ? 'Chế độ sáng'
-                : 'Chế độ tối',
+            tooltip: themeProvider.isDarkMode ? 'Chế độ sáng' : 'Chế độ tối',
           ),
         ],
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: _pages[_index],
+        child: _pages[currentIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _index,
-        onTap: (i) => setState(() => _index = i),
+        currentIndex: currentIndex,
+        onTap: (i) => navigationProvider.setIndex(i),
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(

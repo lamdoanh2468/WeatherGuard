@@ -5,32 +5,33 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Get current user
+  // Lấy người dùng hiện tại
   User? get currentUser => _auth.currentUser;
 
-  // Auth state changes stream
+  // Luồng thay đổi trạng thái xác thực
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Check if user is logged in
+  // Kiểm tra người dùng đã đăng nhập chưa
   bool get isLoggedIn => _auth.currentUser != null;
 
-  // Sign Up with Email and Password
+  // Đăng ký với Email và Mật khẩu
   Future<UserCredential?> signUpWithEmail({
     required String email,
     required String password,
     required String name,
   }) async {
     try {
-      // Create user in Firebase Auth
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      // Tạo người dùng trong Firebase Auth
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Update display name
+      // Cập nhật tên hiển thị
       await userCredential.user?.updateDisplayName(name);
 
-      // Create user document in Firestore
+      // Tạo tài liệu người dùng trong Firestore
       await _createUserDocument(
         uid: userCredential.user!.uid,
         email: email,
@@ -38,14 +39,14 @@ class AuthService {
       );
 
       return userCredential;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'Đã xảy ra lỗi: $e';
     }
   }
 
-  // Sign In with Email and Password
+  // Đăng nhập với Email và Mật khẩu
   Future<UserCredential?> signInWithEmail({
     required String email,
     required String password,
@@ -56,14 +57,14 @@ class AuthService {
         password: password,
       );
       return userCredential;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'Đã xảy ra lỗi: $e';
     }
   }
 
-  // Sign Out
+  // Đăng xuất
   Future<void> signOut() async {
     try {
       await _auth.signOut();
@@ -72,18 +73,18 @@ class AuthService {
     }
   }
 
-  // Reset Password
+  // Đặt lại mật khẩu
   Future<void> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'Đã xảy ra lỗi: $e';
     }
   }
 
-  // Update User Profile
+  // Cập nhật hồ sơ người dùng
   Future<void> updateProfile({
     String? displayName,
     String? photoURL,
@@ -104,7 +105,7 @@ class AuthService {
     }
   }
 
-  // Update Email
+  // Cập nhật Email
   Future<void> updateEmail(String newEmail) async {
     try {
       User? user = _auth.currentUser;
@@ -112,28 +113,28 @@ class AuthService {
         await user.verifyBeforeUpdateEmail(newEmail);
         await user.reload();
       }
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'Không thể cập nhật email: $e';
     }
   }
 
-  // Update Password
+  // Cập nhật Mật khẩu
   Future<void> updatePassword(String newPassword) async {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
         await user.updatePassword(newPassword);
       }
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'Không thể cập nhật mật khẩu: $e';
     }
   }
 
-  // Re-authenticate user (needed before sensitive operations)
+  // Xác thực lại người dùng (cần thiết trước các thao tác nhạy cảm)
   Future<void> reauthenticateUser(String password) async {
     try {
       User? user = _auth.currentUser;
@@ -144,32 +145,32 @@ class AuthService {
         );
         await user.reauthenticateWithCredential(credential);
       }
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'Xác thực không thành công: $e';
     }
   }
 
-  // Delete Account
+  // Xóa tài khoản
   Future<void> deleteAccount() async {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
-        // Delete user document from Firestore
+        // Xóa tài liệu người dùng khỏi Firestore
         await _firestore.collection('users').doc(user.uid).delete();
 
-        // Delete user from Firebase Auth
+        // Xóa người dùng khỏi Firebase Auth
         await user.delete();
       }
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'Không thể xóa tài khoản: $e';
     }
   }
 
-  // Create user document in Firestore
+  // Tạo tài liệu người dùng trong Firestore
   Future<void> _createUserDocument({
     required String uid,
     required String email,
@@ -191,10 +192,11 @@ class AuthService {
     }
   }
 
-  // Get user data from Firestore
+  // Lấy dữ liệu người dùng từ Firestore
   Future<Map<String, dynamic>?> getUserData(String uid) async {
     try {
-      DocumentSnapshot doc = await _firestore.collection('users').doc(uid).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(uid).get();
       if (doc.exists) {
         return doc.data() as Map<String, dynamic>?;
       }
@@ -204,7 +206,7 @@ class AuthService {
     }
   }
 
-  // Update user data in Firestore
+  // Cập nhật dữ liệu người dùng trong Firestore
   Future<void> updateUserData({
     required String uid,
     String? name,
@@ -228,8 +230,8 @@ class AuthService {
     }
   }
 
-  // Handle Firebase Auth Exceptions
-  String _handleAuthException(FirebaseAuthException e) {
+  // Xử lý các ngoại lệ Firebase Auth
+  String _handleAuthException(FirebaseException e) {
     switch (e.code) {
       case 'weak-password':
         return 'Mật khẩu quá yếu. Vui lòng chọn mật khẩu mạnh hơn.';
@@ -256,7 +258,7 @@ class AuthService {
     }
   }
 
-  // Send email verification
+  // Gửi email xác thực
   Future<void> sendEmailVerification() async {
     try {
       User? user = _auth.currentUser;
@@ -268,7 +270,7 @@ class AuthService {
     }
   }
 
-  // Check if email is verified
+  // Kiểm tra email đã được xác thực chưa
   Future<bool> isEmailVerified() async {
     User? user = _auth.currentUser;
     await user?.reload();

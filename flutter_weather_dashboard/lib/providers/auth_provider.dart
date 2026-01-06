@@ -10,7 +10,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
-  // Getters
+  // Các Getter
   User? get user => _user;
   Map<String, dynamic>? get userData => _userData;
   bool get isLoading => _isLoading;
@@ -21,7 +21,7 @@ class AuthProvider extends ChangeNotifier {
     _initAuthListener();
   }
 
-  // Initialize auth state listener
+  // Khởi tạo trình lắng nghe trạng thái xác thực
   void _initAuthListener() {
     _authService.authStateChanges.listen((User? user) async {
       _user = user;
@@ -34,7 +34,7 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  // Load user data from Firestore
+  // Tải dữ liệu người dùng từ Firestore
   Future<void> loadUserData() async {
     if (_user != null) {
       try {
@@ -47,7 +47,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Sign Up
+  // Đăng ký
   Future<bool> signUp({
     required String email,
     required String password,
@@ -75,7 +75,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Sign In
+  // Đăng nhập
   Future<bool> signIn({
     required String email,
     required String password,
@@ -101,7 +101,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Sign Out
+  // Đăng xuất
   Future<void> signOut() async {
     try {
       _isLoading = true;
@@ -121,7 +121,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Reset Password
+  // Đặt lại mật khẩu
   Future<bool> resetPassword(String email) async {
     try {
       _isLoading = true;
@@ -141,7 +141,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Update Profile
+  // Cập nhật hồ sơ
   Future<bool> updateProfile({
     String? name,
     String? phone,
@@ -153,12 +153,12 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
 
       if (_user != null) {
-        // Update display name in Firebase Auth
+        // Cập nhật tên hiển thị trong Firebase Auth
         if (name != null) {
           await _authService.updateProfile(displayName: name);
         }
 
-        // Update user data in Firestore
+        // Cập nhật dữ liệu người dùng trong Firestore
         await _authService.updateUserData(
           uid: _user!.uid,
           name: name,
@@ -166,7 +166,7 @@ class AuthProvider extends ChangeNotifier {
           address: address,
         );
 
-        // Reload user data
+        // Tải lại dữ liệu người dùng
         await loadUserData();
       }
 
@@ -181,17 +181,17 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Update Email
+  // Cập nhật Email
   Future<bool> updateEmail(String newEmail, String password) async {
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      // Re-authenticate first
+      // Xác thực lại người dùng trước
       await _authService.reauthenticateUser(password);
 
-      // Update email
+      // Cập nhật email
       await _authService.updateEmail(newEmail);
 
       _isLoading = false;
@@ -205,17 +205,18 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Update Password
-  Future<bool> updatePassword(String currentPassword, String newPassword) async {
+  // Cập nhật Mật khẩu
+  Future<bool> updatePassword(
+      String currentPassword, String newPassword) async {
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      // Re-authenticate first
+      // Xác thực lại người dùng trước
       await _authService.reauthenticateUser(currentPassword);
 
-      // Update password
+      // Cập nhật mật khẩu
       await _authService.updatePassword(newPassword);
 
       _isLoading = false;
@@ -229,17 +230,17 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Delete Account
+  // Xóa tài khoản
   Future<bool> deleteAccount(String password) async {
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      // Re-authenticate first
+      // Xác thực lại người dùng trước
       await _authService.reauthenticateUser(password);
 
-      // Delete account
+      // Xóa tài khoản
       await _authService.deleteAccount();
 
       _user = null;
@@ -255,7 +256,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Send Email Verification
+  // Gửi email xác thực
   Future<bool> sendEmailVerification() async {
     try {
       _isLoading = true;
@@ -275,7 +276,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Clear error message
+  // Xóa thông báo lỗi
   void clearError() {
     _errorMessage = null;
     notifyListeners();

@@ -1,6 +1,5 @@
 venv/
 tfenv/
-Lib/
 __pycache__/
 *.dll
 *.so

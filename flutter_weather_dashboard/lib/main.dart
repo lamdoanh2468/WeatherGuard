@@ -7,6 +7,8 @@ import 'package:flutter_weather_dashboard/firebase_options.dart';
 import 'package:flutter_weather_dashboard/pages/account_page.dart';
 import 'package:flutter_weather_dashboard/providers/alert_provider.dart';
 import 'package:flutter_weather_dashboard/providers/auth_provider.dart';
+import 'package:flutter_weather_dashboard/providers/station_provider.dart';
+import 'package:flutter_weather_dashboard/providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'providers/weather_provider.dart';
@@ -22,7 +24,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => WeatherProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AlertsProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider())
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => StationProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationProvider())
       ],
       child: const MyApp(),
     ),

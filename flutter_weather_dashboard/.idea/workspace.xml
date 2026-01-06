@@ -5,18 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f9ac21b-75a3-42d7-9a9b-d75ce6065bcb" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.firebaserc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/caches/deviceStreaming.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/DHT22_DATA/dht22_clean.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../AI/DHT22_DATA/dht22_clean.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/DHT22_DATA/dht22_clean_processed.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../AI/DHT22_DATA/dht22_clean_processed.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/DHT22_DATA/dht22_final.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../AI/DHT22_DATA/dht22_final.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/train_dht22_data/models/kmeans.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/train_dht22_data/models/lstm_model.h5" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/train_dht22_data/models/scaler.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/train_dht22_data/train_dht22_data_time_series.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AI/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AI/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../firebase.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_weather_dashboard.iml" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_weather_dashboard.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/gradle.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/app.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/account_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/account_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/alerts_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/alerts_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/charts_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/charts_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/dashboard_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/dashboard_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/maps_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/maps_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/firebase_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/firebase_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/stations/my_station.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/stations/my_station.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
@@ -77,7 +94,7 @@
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/WeatherGuard/flutter_weather_dashboard",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
@@ -96,5 +113,16 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
     </layout>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/providers/alert_provider.dart</url>
+          <line>40</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
