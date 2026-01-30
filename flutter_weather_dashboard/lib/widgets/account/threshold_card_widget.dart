@@ -1,9 +1,51 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/alert_provider.dart';
 
-class ThresholdCardWidget extends StatelessWidget {
+class ThresholdCardWidget extends StatefulWidget {
   const ThresholdCardWidget({super.key});
+
+  @override
+  State<ThresholdCardWidget> createState() => _ThresholdCardWidgetState();
+}
+
+class _ThresholdCardWidgetState extends State<ThresholdCardWidget> {
+  bool _isSaved = false;
+  Timer? _timer;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _handleSave() {
+    setState(() {
+      _isSaved = true;
+    });
+
+    // Reset after 5 seconds
+    _timer?.cancel();
+    _timer = Timer(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          _isSaved = false;
+        });
+      }
+    });
+
+    // Optional: Keep the snackbar feedback or remove it?
+    // User only asked for button text change, but keeping snackbar is nice.
+    // However, the button itself now acts as feedback. I'll keep it concise.
+    ScaffoldMessenger.of(context).clearSnackBars(); // Clear previous overlaps
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Đã lưu cấu hình cảnh báo"),
+        duration: Duration(seconds: 1),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,21 +97,9 @@ class ThresholdCardWidget extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: FilledButton.tonalIcon(
-                    onPressed: isEnabled
-                        ? () {
-                            // Logic lưu đã được xử lý real-time ở onChanged, nút này chỉ để feedback
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Đã cập nhật ngưỡng cảnh báo: ${threshold.toInt()}°C",
-                                ),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          }
-                        : null,
-                    icon: const Icon(Icons.check),
-                    label: const Text("Đã lưu"),
+                    onPressed: isEnabled ? _handleSave : null,
+                    icon: Icon(_isSaved ? Icons.check : Icons.save),
+                    label: Text(_isSaved ? "Đã lưu" : "Lưu"),
                   ),
                 ),
               ],
