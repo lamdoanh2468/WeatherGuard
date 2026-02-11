@@ -15,7 +15,6 @@ class FirebaseService:
         self.session.mount("https://", HTTPAdapter(max_retries=retries))
 
     def fetch_data(self):
-        """Fetch all data from Firebase"""
         try:
             response = self.session.get(config.FIREBASE_URL, timeout=10)
             response.raise_for_status()
@@ -28,14 +27,12 @@ class FirebaseService:
             return {}
 
     def fetch_sensor_data(self):
-        """Fetch only sensor_data branch"""
         data = self.fetch_data()
         if not data or "sensor_data" not in data:
             return {}
         return data["sensor_data"]
 
     def check_connection(self):
-        """Check if Firebase connection is working"""
         try:
             response = self.session.get(config.FIREBASE_URL, timeout=5)
             return response.status_code == 200

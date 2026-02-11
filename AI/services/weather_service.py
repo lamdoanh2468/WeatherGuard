@@ -64,8 +64,6 @@ class WeatherService:
 
         df = df.dropna(subset=required_cols)
         
-        # Determine strictness of numeric conversion based on column data types
-        # Using coerce to handle any non-numeric data gracefully
         df["temperature"] = pd.to_numeric(df["temperature"], errors="coerce")
         df["humidity"] = pd.to_numeric(df["humidity"], errors="coerce")
         df["timestamp"] = pd.to_numeric(df["timestamp"], errors="coerce")
